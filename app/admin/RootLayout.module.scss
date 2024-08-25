@@ -1,0 +1,8 @@
+.content-container {
+  transition: all 0.5s ease-in-out;
+  padding: 20px 20px 20px 60px;
+
+  &.side-panel-open {
+    padding: 20px 20px 20px 320px;
+  }
+}
