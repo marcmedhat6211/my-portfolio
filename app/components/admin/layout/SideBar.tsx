@@ -1,4 +1,4 @@
-import { Dispatch, FC, Fragment, SetStateAction, useState } from "react";
+import { Dispatch, FC, Fragment, SetStateAction } from "react";
 import styles from "./SideBar.module.scss";
 import { adminSideBarItems } from "@/app/constants/admin-side-bar-items";
 import Link from "next/link";

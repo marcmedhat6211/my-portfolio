@@ -1,4 +1,5 @@
 import {
+  ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -6,12 +7,15 @@ import {
 import { FC } from "react";
 import { Table } from "react-bootstrap";
 
-type Props = {};
+type Props = {
+  data: any[];
+  columns: ColumnDef<any, any>[];
+};
 
-const OverviewTable: FC<Props> = () => {
+const OverviewTable: FC<Props> = ({ data, columns }) => {
   const table = useReactTable({
-    data: [],
-    columns: [],
+    data,
+    columns,
     getCoreRowModel: getCoreRowModel(),
   });
 

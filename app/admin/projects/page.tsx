@@ -1,8 +1,9 @@
 "use client";
-import OverviewTable from "@/app/components/admin/ui/tables/OverviewTable";
+
+import ProjectsPage from "@/app/components/admin/pages/ProjectsPage";
 
 const Projects = () => {
-  return <OverviewTable />;
+  return <ProjectsPage />;
 };
 
 export default Projects;
