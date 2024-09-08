@@ -5,16 +5,23 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { FC } from "react";
-import { Spinner, Table } from "react-bootstrap";
+import { Button, Spinner, Table } from "react-bootstrap";
+import { FaPlus } from "react-icons/fa6";
 import styles from "./OverviewTable.module.scss";
 
 type Props = {
   data: any[];
   columns: ColumnDef<any, any>[];
   loading: boolean;
+  onAddNewResource: () => void;
 };
 
-const OverviewTable: FC<Props> = ({ data, columns, loading }) => {
+const OverviewTable: FC<Props> = ({
+  data,
+  columns,
+  loading,
+  onAddNewResource,
+}) => {
   const table = useReactTable({
     data,
     columns,
@@ -23,6 +30,11 @@ const OverviewTable: FC<Props> = ({ data, columns, loading }) => {
 
   return (
     <div className={styles["table-container"]}>
+      <div className="d-flex justify-content-end mb-1">
+        <Button variant="outline-success" size="sm" onClick={onAddNewResource}>
+          <FaPlus />
+        </Button>
+      </div>
       <Table responsive hover>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -41,15 +53,16 @@ const OverviewTable: FC<Props> = ({ data, columns, loading }) => {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
+          {!loading &&
+            table.getRowModel().rows.map((row) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
         </tbody>
       </Table>
 

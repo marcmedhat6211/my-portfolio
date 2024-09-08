@@ -4,27 +4,39 @@ import { db } from "@/app/firebase/db";
 import { ProjectInterface } from "@/app/interfaces/ProjectInterface";
 import { createColumnHelper } from "@tanstack/react-table";
 import { collection, getDocs } from "firebase/firestore";
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { FC, Fragment, useEffect, useMemo, useState } from "react";
 import { Button } from "react-bootstrap";
 import { FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
 const columnHelper = createColumnHelper<ProjectInterface>();
 
-const ProjectsPage = () => {
+const ProjectsTable: FC = () => {
+  // constants
+  const router = useRouter();
+
   // states
   const [tableData, setTableData] = useState<ProjectInterface[]>([]);
+  const [fetchingTableData, setFetchingTableData] = useState(false);
 
   useEffect(() => {
     const fetchProjects = async () => {
-      const projectsRef = collection(db, "projects");
-      const projectsSnap = await getDocs(projectsRef);
+      setFetchingTableData(true);
+      try {
+        const projectsRef = collection(db, "projects");
+        const projectsSnap = await getDocs(projectsRef);
 
-      setTableData(
-        projectsSnap.docs.map(
-          (doc) => ({ id: doc.id, ...doc.data() } as ProjectInterface)
-        )
-      );
+        setTableData(
+          projectsSnap.docs.map(
+            (doc) => ({ id: doc.id, ...doc.data() } as ProjectInterface)
+          )
+        );
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setFetchingTableData(false);
+      }
     };
 
     fetchProjects();
@@ -39,9 +51,16 @@ const ProjectsPage = () => {
       columnHelper.display({
         id: "actions",
         header: () => <Fragment>Actions</Fragment>,
-        cell: () => (
+        cell: ({ row }) => (
           <Fragment>
-            <Button variant="outline-primary" size="sm" className="me-2">
+            <Button
+              variant="outline-primary"
+              size="sm"
+              className="me-2"
+              onClick={() =>
+                router.push(`/admin/projects/${row.original.id}/edit`)
+              }
+            >
               <FaEdit />
             </Button>
             <Button variant="outline-danger" size="sm">
@@ -54,7 +73,14 @@ const ProjectsPage = () => {
     []
   );
 
-  return <OverviewTable data={tableData} columns={columns} loading />;
+  return (
+    <OverviewTable
+      data={tableData}
+      columns={columns}
+      loading={fetchingTableData}
+      onAddNewResource={() => router.push("/admin/projects/create")}
+    />
+  );
 };
 
-export default ProjectsPage;
+export default ProjectsTable;

@@ -1,9 +1,9 @@
 "use client";
 
-import ProjectsPage from "@/app/components/admin/pages/ProjectsPage";
+import ProjectsTable from "@/app/components/admin/customs/projects/ProjectsTable";
 
 const Projects = () => {
-  return <ProjectsPage />;
+  return <ProjectsTable />;
 };
 
 export default Projects;

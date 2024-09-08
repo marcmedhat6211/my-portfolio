@@ -1,5 +1,5 @@
 export interface ProjectInterface {
-  id: string;
+  id?: string;
   name: string;
   description: string;
   featured: boolean;
