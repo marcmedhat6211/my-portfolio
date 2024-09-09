@@ -1,26 +1,54 @@
 import { ProjectInterface } from "@/app/interfaces/ProjectInterface";
 import { Project } from "@/app/models/Project";
-import { FC } from "react";
-import { Form } from "react-bootstrap";
+import { FC, useEffect, useState } from "react";
+import { Button, Form } from "react-bootstrap";
 import { Controller, useForm } from "react-hook-form";
 import { WithContext as ReactTags, SEPARATORS } from "react-tag-input";
 
+type TechStack = { id: string; text?: string; className: string };
+
 const ProjectsForm: FC = () => {
+  // react hook form
   const {
     handleSubmit,
     reset,
     control,
+    setValue,
     formState: { errors },
   } = useForm<ProjectInterface>({
     defaultValues: Project,
   });
 
-  const keyCodes = {
-    comma: 188,
-    enter: [10, 13],
+  // states
+  const [techStacks, setTechStacks] = useState<TechStack[]>([]);
+
+  useEffect(() => {
+    setValue(
+      "techStacks",
+      techStacks.map((techStack) => techStack.id)
+    );
+  }, [techStacks]);
+
+  const onTagUpdate = (index: number, newTag: TechStack) => {
+    const updatedTechStacks = [...techStacks];
+    updatedTechStacks.splice(index, 1, newTag);
+    setTechStacks(updatedTechStacks);
   };
 
-  const formSubmitHandler = (data: ProjectInterface) => {};
+  const handleTagDrag = (
+    techStack: TechStack,
+    currPos: number,
+    newPos: number
+  ) => {
+    const newTechStacks = techStacks.slice();
+    newTechStacks.splice(currPos, 1);
+    newTechStacks.splice(newPos, 0, techStack);
+    setTechStacks(newTechStacks);
+  };
+
+  const formSubmitHandler = (data: ProjectInterface) => {
+    console.log(data);
+  };
 
   return (
     <Form onSubmit={handleSubmit(formSubmitHandler)}>
@@ -80,7 +108,28 @@ const ProjectsForm: FC = () => {
       </Form.Group>
 
       {/* techStacks */}
-      {/* <ReactTags /> */}
+      <ReactTags
+        placeholder="Please enter the tech stacks you used in this project..."
+        tags={techStacks}
+        separators={[SEPARATORS.ENTER, SEPARATORS.COMMA]}
+        editable
+        onTagUpdate={onTagUpdate}
+        onClearAll={() => setTechStacks([])}
+        handleAddition={(techStackObj: TechStack) =>
+          setTechStacks((prevState) => [...prevState, techStackObj])
+        }
+        handleDrag={handleTagDrag}
+        handleDelete={(index) =>
+          setTechStacks(techStacks.filter((_, i) => i !== index))
+        }
+        inputFieldPosition="top"
+      />
+
+      <div className="d-flex justify-content-end mt-3">
+        <Button type="submit" variant="success" className="w-25">
+          Submit
+        </Button>
+      </div>
     </Form>
   );
 };
