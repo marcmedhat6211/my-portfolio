@@ -1,7 +1,8 @@
 import { ProjectInterface } from "@/app/interfaces/ProjectInterface";
 import { Project } from "@/app/models/Project";
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
+import Dropzone, { useDropzone } from "react-dropzone";
 import { Controller, useForm } from "react-hook-form";
 import { WithContext as ReactTags, SEPARATORS } from "react-tag-input";
 
@@ -17,6 +18,14 @@ const ProjectsForm: FC = () => {
     formState: { errors },
   } = useForm<ProjectInterface>({
     defaultValues: Project,
+  });
+
+  const onFilesDrop = useCallback((acceptedFiles: File[]) => {
+    // Do something with the files
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: onFilesDrop,
   });
 
   // states
@@ -124,6 +133,16 @@ const ProjectsForm: FC = () => {
         }
         inputFieldPosition="top"
       />
+
+      {/* images */}
+      <Dropzone>
+        {({ getRootProps, getInputProps }) => (
+          <div {...getRootProps()}>
+            <input {...getInputProps()} />
+            <p>Drag 'n' drop some files here, or click to select files</p>
+          </div>
+        )}
+      </Dropzone>
 
       <div className="d-flex justify-content-end mt-3">
         <Button type="submit" variant="success" className="w-25">
