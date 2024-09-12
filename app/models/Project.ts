@@ -5,5 +5,4 @@ export const Project: ProjectInterface = {
   description: "",
   featured: false,
   techStacks: [],
-  images: [],
 };

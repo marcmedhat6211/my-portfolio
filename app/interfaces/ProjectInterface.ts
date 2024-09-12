@@ -4,5 +4,4 @@ export interface ProjectInterface {
   description: string;
   featured: boolean;
   techStacks: string[];
-  images: string[];
 }

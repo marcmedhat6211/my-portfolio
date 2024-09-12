@@ -1,0 +1,44 @@
+.images-container {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 16px;
+
+  .img-container {
+    margin: 8px;
+    position: relative;
+
+    img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+    }
+
+    .remove-img-btn {
+      padding: 0;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #000000;
+      border: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      right: -10px;
+      top: -10px;
+      transition: all 0.2s ease-in-out;
+
+      svg {
+        color: #ffffff;
+        transition: all 0.2s ease-in-out;
+      }
+
+      &:hover {
+        background-color: yellow;
+        svg {
+          color: #000000;
+        }
+      }
+    }
+  }
+}

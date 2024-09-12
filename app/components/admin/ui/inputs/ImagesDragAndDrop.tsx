@@ -2,6 +2,7 @@ import {
   CSSProperties,
   Dispatch,
   FC,
+  MouseEvent,
   SetStateAction,
   useCallback,
   useEffect,
@@ -9,6 +10,8 @@ import {
 } from "react";
 import { Form } from "react-bootstrap";
 import { useDropzone } from "react-dropzone";
+import styles from "./ImagesDragAndDrop.module.scss";
+import { IoMdClose } from "react-icons/io";
 
 export interface FileWithPreview extends File {
   preview: string;
@@ -60,13 +63,32 @@ const ImagesDragAndDrop: FC<Props> = ({ files, setSelectedFiles }) => {
         })
       ) as FileWithPreview[];
 
-      setSelectedFiles((prevState) => [...prevState, ...filesWithPreview]);
+      setSelectedFiles((prevState) => {
+        const allFiles = [...prevState, ...filesWithPreview];
+        const uniqueFiles = Array.from(
+          new Map(
+            allFiles.map((file) => [file.name + file.size, file])
+          ).values()
+        );
+
+        return uniqueFiles;
+      });
     },
     [setSelectedFiles]
   );
 
   const { getRootProps, getInputProps, isFocused, isDragAccept, isDragReject } =
     useDropzone({ accept: { "image/*": [] }, onDrop: onFilesDrop });
+
+  const removeImageHandler = (
+    file: File,
+    event: MouseEvent<HTMLButtonElement>
+  ) => {
+    event.stopPropagation();
+    setSelectedFiles((prevState) =>
+      prevState.filter((fileObj) => fileObj.name !== file.name)
+    );
+  };
 
   const style = useMemo(
     () => ({
@@ -86,17 +108,22 @@ const ImagesDragAndDrop: FC<Props> = ({ files, setSelectedFiles }) => {
         <p className="mb-0">
           Drag 'n' drop some files here, or click to select files
         </p>
-        <div style={{ display: "flex", flexWrap: "wrap", marginTop: 16 }}>
-          {files.map((file) => (
-            <div key={file.name} style={{ margin: 8 }}>
-              <img
-                src={file.preview as string}
-                alt={file.name}
-                style={{ width: 100, height: 100, objectFit: "cover" }}
-              />
-            </div>
-          ))}
-        </div>
+        {files.length > 0 && (
+          <div className={styles["images-container"]}>
+            {files.map((file) => (
+              <div className={styles["img-container"]} key={file.name}>
+                <button
+                  type="button"
+                  className={styles["remove-img-btn"]}
+                  onClick={removeImageHandler.bind(this, file)}
+                >
+                  <IoMdClose />
+                </button>
+                <img src={file.preview as string} alt={file.name} />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </Form.Group>
   );
